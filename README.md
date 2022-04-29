@@ -1,2 +1,4 @@
 # open-school-auth
-Auth for open-school system
+Micro service for auth for open-school system
+
+This is just for study purposes only
