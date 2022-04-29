@@ -49,7 +49,7 @@ app.post("/user/register", async (req, res) => {
 			{ user_id: user._id, email },
 			process.env.TOKEN_KEY,
 			{
-				expiresIn: "1w",
+				expiresIn: "1y",
 			}
 		);
 		// save user token
@@ -83,7 +83,7 @@ app.post("/user/login", async (req, res) => {
 				{ user_id: user._id, email },
 				process.env.TOKEN_KEY,
 				{
-					expiresIn: "2h",
+					expiresIn: "1y",
 				}
 			);
 			user.password = null
