@@ -9,7 +9,7 @@ const user = {
     last_name: 'Celmer'
 }
 const teacherToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjM3NWFlZDkxNzExYzRmNjE5NjQxMjY0IiwiZW1haWwiOiJ0ZWFjaGVyQGdtYWlsLmNvbSIsImlhdCI6MTY2ODY1Njg1NywiZXhwIjoxNzAwMjE0NDU3fQ.UvtJ6pEOEp9xo5PVPRDDSh0U4nBldfCeNVmgElc3D-Y'
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjM3NTk3ZDZjMzQ3NmRiNGMxN2NhYzVlIiwiZW1haWwiOiJhbGV4QGdtYWlsLmNvbSIsImlhdCI6MTY2ODY1Mjg3MywiZXhwIjoxNzAwMjEwNDczfQ.DLRTDf0VQlX7UGDenc0Ur2bp_umEuKTdW7nT7wN9unc';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjM3NWIxNGU0MWQ5MWNmYzYxYzk3M2ZhIiwiZW1haWwiOiJhbGV4QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY3NDE3MDc2NywiZXhwIjoxNzA1NzI4MzY3fQ.UqSWeyyLI9tsonaQd2ulFY0qXLzBrve_2A6OCa30Ink';
 
 let school = {
     name: 'Yete',
@@ -17,18 +17,6 @@ let school = {
     inep: '123456789',
     has_medium_teaching: true,
     accept_terms: true,
-}
-
-schoolToExpect = {
-    name: expect.any(String),
-    email: expect.any(String),
-    inep: expect.any(String),
-    has_medium_teaching: expect.any(Boolean),
-    accept_terms: expect.any(Boolean),
-    __v: expect.any(Number), 
-    _id: expect.any(Number), 
-    createdAt: expect.any(Date),
-    updatedAt: expect.any(Date) 
 }
 
 describe('SCHOOL test', function () {
@@ -47,6 +35,20 @@ describe('SCHOOL test', function () {
             .expect(204)
     })
 
+    it('POST create school 401', async function () {
+        response = await request(app).post('/school').send(school).set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .set('token', teacherToken)
+            .expect(401)
+    })
+
+    it('PUT update school 401', async function () {
+        school.name = 'Yete edit'
+        response = await request(app).put('/school/' + school._id).send(school).set('Accept', 'application/json')
+            .set('token', teacherToken)
+            .expect(401)
+    })
+
     it('GET Array of schools', async function () {
         const response = await (request(app).get('/school/').set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -57,14 +59,14 @@ describe('SCHOOL test', function () {
             expect.arrayContaining([
                 expect.objectContaining({
                     name: expect.any(String),
-    email: expect.any(String),
-    inep: expect.any(String),
-    has_medium_teaching: expect.any(Boolean),
-    accept_terms: expect.any(Boolean),
-    __v: expect.any(Number), 
-    _id: expect.any(Number), 
-    createdAt: expect.any(String),
-    updatedAt: expect.any(String) 
+                    email: expect.any(String),
+                    inep: expect.any(Number),
+                    has_medium_teaching: expect.any(Boolean),
+                    accept_terms: expect.any(Boolean),
+                    __v: expect.any(Number),
+                    _id: expect.any(String),
+                    createdAt: expect.any(String),
+                    updatedAt: expect.any(String)
                 })
             ])
         )
@@ -78,14 +80,14 @@ describe('SCHOOL test', function () {
 
         expect(response.body).toEqual(expect.objectContaining({
             name: expect.any(String),
-    email: expect.any(String),
-    inep: expect.any(String),
-    has_medium_teaching: expect.any(Boolean),
-    accept_terms: expect.any(Boolean),
-    __v: expect.any(Number), 
-    _id: expect.any(Number), 
-    createdAt: expect.any(String),
-    updatedAt: expect.any(String) 
+            email: expect.any(String),
+            inep: expect.any(Number),
+            has_medium_teaching: expect.any(Boolean),
+            accept_terms: expect.any(Boolean),
+            __v: expect.any(Number), 
+            _id: expect.any(String), 
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String) 
         }))
 
     })

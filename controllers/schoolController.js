@@ -5,7 +5,7 @@ const School = require("../model/school");
 const User = require("../model/user");
 
 // Register
-exports.register = ( async (req, res) => {
+exports.register = (async (req, res) => {
 	// our register logic goes here...
 	try {
 		// Get school input
@@ -48,7 +48,7 @@ exports.register = ( async (req, res) => {
 });
 
 // updates school
-exports.update = ( async (req, res) => {
+exports.update = (async (req, res) => {
 	const id = req.params.id
 
 	const { name, email, users, classes } = req.body;
@@ -68,12 +68,8 @@ exports.update = ( async (req, res) => {
 
 });
 
-/**
- * This function will return in the future
- * only the schools that the user
- * is part of.
- */
-exports.list =  (async (req, res) => {
+// list schools 
+exports.list = (async (req, res) => {
 	const schools = await School.find()
 	if (schools) {
 		return res.status(200).json(schools)
@@ -82,13 +78,17 @@ exports.list =  (async (req, res) => {
 	}
 });
 
+/**
+ * Schools that the user is in
+ */
 exports.mySchool = (async (req, res) => {
 	try {
-		const schools = await school.find({ users: { "$in": req.user.user_id } })
-		if (schools){
+		const schools = await School.find({ users: { "$in": req.user.user_id } })
+		console.log(schools);
+		if (schools) {
 			return res.status(200).json(schools)
 		}
-		else{
+		else {
 			return res.status(404).send({ message: "Nenhuma escola para seu usuário." })
 		}
 	} catch (error) {
@@ -103,10 +103,16 @@ exports.id = (async (req, res) => {
 		const { id } = req.params
 		const school = await School.findById(id)
 		if (school) {
-			return res.status(200).send(school)
-		} else {
-			return res.status(404).send({ message: 'Nenhuma escola removido!' })
+			if (req.user.role !== "admin") {
+				if (school.users.includes(req.user._id)) {
+					return res.status(200).send(school)
+				}
+			}
+			return res.status(200).json(school)
 		}
+
+		return res.status(404).send({ message: 'Nenhuma escola encontrada!' })
+
 	} catch (error) {
 		return res.status(500).send({ message: 'Erro no servidor!' })
 	}
